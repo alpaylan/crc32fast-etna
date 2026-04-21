@@ -295,12 +295,12 @@ fn run_crabcheck_property(property: &str) -> Outcome {
     }
     CC_COUNTER.store(0, Ordering::Relaxed);
     let t0 = Instant::now();
-    let cc_config = crabcheck_qc::Config {
+    let cc_config = crabcheck::quickcheck::Config {
         tests: cases_budget(),
     };
     let result = match property {
         "CombineZeroLengthIdentity" => {
-            crabcheck_qc::quickcheck_with_config(cc_config, cc_combine_zero)
+            crabcheck::quickcheck::quickcheck_with_config(cc_config, cc_combine_zero)
         }
         _ => {
             return (
