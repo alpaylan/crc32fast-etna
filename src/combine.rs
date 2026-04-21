@@ -21,11 +21,16 @@ fn multiply(a: u32, mut b: u32) -> u32 {
 }
 
 pub(crate) fn combine(crc1: u32, crc2: u32, len2: u64) -> u32 {
+    /*| combine_zero_length_identity */
     // Special case: If the length of the second chunk is zero, return the hash
     // of the first chunk.
     if len2 == 0 {
         return crc1;
     }
+    /*|| combine_zero_length_identity_724ceb6_1 */
+    /*|
+    */
+    /* |*/
 
     // We are padding the first checksum with len2-amount of zeroes. For efficiency,
     // this is done in powers-of-two via a lookup table rather than one by one.

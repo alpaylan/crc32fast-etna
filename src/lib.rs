@@ -44,6 +44,9 @@ mod combine;
 mod specialized;
 mod table;
 
+#[cfg(feature = "etna")]
+pub mod etna;
+
 /// Computes the CRC32 hash of a byte slice.
 ///
 /// Check out [`Hasher`] for more advanced use-cases.

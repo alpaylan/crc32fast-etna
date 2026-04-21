@@ -4,3 +4,5 @@
 /fuzz/in
 **/*.rs.bk
 Cargo.lock
+/.hegel/
+/progress.jsonl

@@ -17,6 +17,13 @@ rust-version = "1.63"
 [dependencies]
 cfg-if = "1.0"
 
+# ETNA framework deps — optional, activated by the `etna` feature.
+proptest = { version = "1.11.0", optional = true }
+quickcheck_etna = { path = "/Users/akeles/Programming/projects/PbtBenchmark/quickcheck", package = "quickcheck", features = ["etna"], optional = true }
+crabcheck = { path = "/Users/akeles/Programming/projects/PbtBenchmark/crabcheck", optional = true }
+hegeltest = { version = "0.3.7", optional = true }
+rand_etna = { package = "rand", version = "0.9", optional = true }
+
 [dev-dependencies]
 bencher = "0.1"
 quickcheck = { version = "1.0", default-features = false }
@@ -27,6 +34,21 @@ default = ["std"]
 std = []
 nightly = []
 
+# ETNA integration: pulls in proptest/quickcheck/crabcheck/hegel for the etna runner.
+etna = [
+    "std",
+    "dep:proptest",
+    "dep:quickcheck_etna",
+    "dep:crabcheck",
+    "dep:hegeltest",
+    "dep:rand_etna",
+]
+
 [[bench]]
 name = "bench"
 harness = false
+
+[[bin]]
+name = "etna"
+path = "src/bin/etna.rs"
+required-features = ["etna"]

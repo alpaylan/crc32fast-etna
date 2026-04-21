@@ -1,0 +1,80 @@
+# ETNA workload index for crc32fast.
+#
+# One [[variant]] per injected mutation. Source of truth for variant->property
+# mapping. Every other fact is derivable from the source tree:
+#   - marauders list --path .                      (inline marauder mutations)
+#   - ls patches/*.patch                           (patch-based variants; none here)
+#   - grep -rn "pub fn property_" src/etna.rs      (property functions)
+#   - grep -rn "fn witness_.*_case_" tests/        (witness tests)
+#
+# Base commit for this workload is HEAD of master on this tree. Every
+# etna/<variant> branch is master + exactly one marauder converted to its
+# functional form (or an env var M_<variant>=active flip).
+
+name = "crc32fast"
+language = "Rust"
+
+[workload]
+name = "crc32fast"
+crate = "crc32fast"
+language = "rust"
+description = """
+ETNA workload for the Rust `crc32fast` crate. Each variant re-introduces
+one historical bug-fix into a fresh patched branch and pairs it with a
+framework-neutral property, four PBT adapters, and a deterministic
+witness test.
+"""
+
+[runner]
+bin = "etna"
+cargo_features = ["etna"]
+properties = [
+    "CombineZeroLengthIdentity",
+]
+tools = ["etna", "proptest", "quickcheck", "crabcheck", "hegel"]
+
+[[variant]]
+name = "combine_zero_length_identity_724ceb6_1"
+property = "combine_zero_length_identity"
+injection = "marauders"
+source_commit = "724ceb6d7f0b24fd2ac2be3461bdcefdae619703"
+witnesses = [
+    "witness_combine_zero_length_identity_case_one_zero",
+    "witness_combine_zero_length_identity_case_deadbeef_cafebabe",
+]
+frameworks = ["proptest", "quickcheck", "crabcheck", "hegel"]
+files = ["src/combine.rs"]
+
+# Candidates discovered but dropped for terminal reasons:
+#   210ad21  fix endianness bug in fast baseline impl
+#     reason: not observable on little-endian target; the buggy expression
+#     `u32::from_le(crc)` is a no-op on LE and only differs on BE. All
+#     benchmark runners are LE (x86_64, aarch64 Darwin).
+#   a095657  fix alignment diff calculation (src/specialized/pclmulqdq.rs)
+#     reason: surface not reached; the pclmulqdq specialized module is only
+#     compiled and dispatched on x86/x86_64. This workload also targets
+#     aarch64 Darwin where the bug path is not linked, and the bug itself
+#     requires a pointer with the high bit of the low nibble set, which
+#     `_mm_loadu_si128`-safe allocations never produce.
+#   c90e2c8  fix noop specialization code
+#   994b3ad  update specialization fallback with missing methods
+#   ea0d978  Fix build for targets that don't support sse2/sse4.2/pclmulqdq
+#   316d1e5  fix typo in cfg clause for x86
+#   5adf381  Reduce #[cfg] duplication
+#   ddfc461  Fix `is_aarch64_feature_detected` usage
+#   ae8c78a  Fix AArch64 build when the `nightly` feature is enabled
+#   24d928a  fix unknown feature error in nightly
+#   0475e4c  fix macro usage for rust 1.27.0
+#   40d87ab  fix pclmulqdq test imports
+#     reason: compile-time only, no observable runtime invariant. These
+#     commits restore buildability on some target/toolchain combination
+#     but do not change any computed CRC.
+#   32e3144  fix (CI/MSRV)
+#   978beb1  fix MSRV CI workflow failing due to MSRV-incompatible dependencies
+#     reason: CI/MSRV changes with no source behaviour effect.
+#   1dd81ee  minimize branches in combine logic
+#   8df0677  even faster combine
+#   f8dd0a1  much faster combine function
+#     reason: algorithmic refactors with no observable behaviour change;
+#     the existing `golden` tests and the `combine`/`combine_from_len`
+#     properties cross-check the old and new implementations.
