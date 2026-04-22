@@ -6,3 +6,6 @@
 Cargo.lock
 /.hegel/
 /progress.jsonl
+/.marauders/
+/.migration-cache/
+/etna.log
