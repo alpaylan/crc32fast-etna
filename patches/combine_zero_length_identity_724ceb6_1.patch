@@ -1,0 +1,16 @@
+# marauders: name=combine_zero_length_identity
+diff --git a/src/combine.rs b/src/combine.rs
+--- a/src/combine.rs
++++ b/src/combine.rs
+@@ -21,11 +21,6 @@
+ }
+ 
+ pub(crate) fn combine(crc1: u32, crc2: u32, len2: u64) -> u32 {
+-    // Special case: If the length of the second chunk is zero, return the hash
+-    // of the first chunk.
+-    if len2 == 0 {
+-        return crc1;
+-    }
+ 
+     // We are padding the first checksum with len2-amount of zeroes. For efficiency,
+     // this is done in powers-of-two via a lookup table rather than one by one.

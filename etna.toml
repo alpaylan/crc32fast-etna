@@ -20,7 +20,8 @@ commit_subjects = ["cover special case in combine"]
 summary = "`combine()` missed a zero-length short-circuit: with `len2 == 0` and a non-zero `crc2`, the main path XOR'd `crc2` into `crc1` and returned `crc1 ^ crc2` instead of `crc1`. The fix adds `if len2 == 0 { return crc1; }` at the top of the function."
 
 [tasks.injection]
-kind = "marauders"
+kind = "patch"
+patch = "patches/combine_zero_length_identity_724ceb6_1.patch"
 files = ["src/combine.rs"]
 locations = [{ file = "src/combine.rs", line = 24 }]
 
